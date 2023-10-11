@@ -27,16 +27,18 @@ Generated from Godot commit [\`$COMMIT_HASH\`](https://github.com/godotengine/go
 
 Interested in contributing? See
 [Contribute to the class reference](https://docs.godotengine.org/en/latest/community/contributing/updating_the_class_reference.html)
-in the documentation.
+in the documentation. To avoid conflicts with pending contributions, check
+[open documentation pull requests](https://github.com/godotengine/godot/pulls?q=is%3Apr+is%3Aopen+label%3Adocumentation)
+before starting to work on a class.
 
 EOF
 
 # Trim the first line of the output to get a valid Markdown table.
-# Ensure that module documentation is also included in the report.
-python3 "$GODOT_TMP_DIR/doc/tools/doc_status.py" -u "$GODOT_TMP_DIR/doc/classes" "$GODOT_TMP_DIR"/modules/*/doc_classes | tail -n +2 >> content/_index.md
+# Ensure that module and platform documentation is also included in the report.
+python3 "$GODOT_TMP_DIR/doc/tools/doc_status.py" -u "$GODOT_TMP_DIR/doc/classes" "$GODOT_TMP_DIR"/modules/*/doc_classes "$GODOT_TMP_DIR"/platform/*/doc_classes | tail -n +2 >> content/_index.md
 
 # Fade out `0/0` completion ratios as they can't be completed (there's nothing to document).
-sed -i 's:0/0:<span style="opacity\: 0.5">0/0</span>:g' content/_index.md
+sed -i 's:0/0:<span style="opacity\: 0.3">0/0</span>:g' content/_index.md
 
 # Add classes for completion percentages to style them for easier visual grepping.
 # Incomplete percentages (0-99%).
@@ -45,7 +47,7 @@ sed -Ei 's:\s([0-9][0-9]?)%:<span class="completion-incomplete" style="--percent
 sed -Ei 's:100%:<span class="completion-complete">100%</span>:g' content/_index.md
 
 # Shorten class links' text to decrease the table's width.
-sed -Ei 's:(https\:.+(class_.+)\.html):[\2](\1):g' content/_index.md
+sed -Ei 's:(https\:.+classes/(class_.+)\.html):[\2](\1):g' content/_index.md
 
 # Build the website with optimizations enabled.
 hugo --minify
